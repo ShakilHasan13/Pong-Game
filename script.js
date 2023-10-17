@@ -1,14 +1,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Set canvas dimensions based on screen size
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 // Paddle and ball properties
-const paddleWidth = canvas.width / 100;
-const paddleHeight = canvas.height / 5;
-const ballSize = Math.min(canvas.width, canvas.height) / 50;
+const paddleWidth = 10;
+const paddleHeight = 100;
+const ballSize = 10;
 
 // Paddle positions
 let leftPaddleY = (canvas.height - paddleHeight) / 2;
@@ -21,15 +17,15 @@ let rightPaddleSpeed = 0;
 // Ball position and speed
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
-let ballSpeedX = canvas.width / 100;
-let ballSpeedY = canvas.height / 100;
+let ballSpeedX = 5;
+let ballSpeedY = 5;
 
 // Score tracking
 let leftPlayerScore = 0;
 let rightPlayerScore = 0;
 
 // AI opponent
-const aiSpeed = canvas.height / 100;
+const aiSpeed = 3;
 
 // Game settings
 const winningScore = 5;
@@ -48,12 +44,12 @@ function drawCircle(x, y, radius, color) {
 }
 
 function drawNet() {
-    for (let i = 0; i < canvas.height; i += canvas.height / 20) {
-        drawRect(canvas.width / 2 - 1, i, 2, canvas.height / 10, "#fff");
+    for (let i = 0; i < canvas.height; i += 40) {
+        drawRect(canvas.width / 2 - 1, i, 2, 20, "#fff");
     }
 }
 
-function drawText(text, x, y, color, fontSize) {
+function drawText(text, x, y, color, fontSize = "30px") {
     ctx.fillStyle = color;
     ctx.font = `bold ${fontSize} 'Press Start 2P', cursive`;
     ctx.fillText(text, x, y);
@@ -66,11 +62,11 @@ function draw() {
     if (showingWinScreen) {
         ctx.fillStyle = "#fff";
         if (leftPlayerScore >= winningScore) {
-            drawText("You Win!", canvas.width / 3, canvas.height / 2 - canvas.height / 15, "#fff", canvas.width / 40 + "px");
+            drawText("You Win!", 240, canvas.height / 2 - 50, "#fff", "20px");
         } else if (rightPlayerScore >= winningScore) {
-            drawText("You Lose!", canvas.width / 3, canvas.height / 2 - canvas.height / 15, "#fff", canvas.width / 40 + "px");
+            drawText("You Lose!", 240, canvas.height / 2 - 50, "#fff", "20px");
         }
-        drawText("Click to Continue", canvas.width / 4, canvas.height / 2 + canvas.height / 30, "#fff", canvas.width / 60 + "px");
+        drawText("Click to Continue", 220, canvas.height / 2 + 30, "#fff", "16px");
         return;
     }
 
@@ -142,7 +138,7 @@ function resetBall() {
     ballX = canvas.width / 2;
     ballY = canvas.height / 2;
     ballSpeedX = -ballSpeedX;
-    ballSpeedY = canvas.height / 100;
+    ballSpeedY = 5;
 }
 
 function handleMouseClick(event) {
@@ -153,9 +149,10 @@ function handleMouseClick(event) {
     }
 }
 
-function handleMouseMovement(event) {
-    let mouseY = event.clientY - canvas.getBoundingClientRect().top;
-    leftPaddleY = mouseY - paddleHeight / 2;
+function handleTouchMove(event) {
+    event.preventDefault();
+    let touchY = event.touches[0].clientY - canvas.getBoundingClientRect().top;
+    leftPaddleY = touchY - paddleHeight / 2;
 }
 
 function update() {
@@ -164,8 +161,8 @@ function update() {
     requestAnimationFrame(update);
 }
 
-canvas.addEventListener("mousemove", handleMouseMovement);
 canvas.addEventListener("click", handleMouseClick);
+canvas.addEventListener("touchmove", handleTouchMove);
 
 resetBall();
 update();
